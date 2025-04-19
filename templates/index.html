@@ -1,0 +1,679 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Master Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gradient-start: #6a11cb;
+            --gradient-end: #2575fc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--white);
+            min-height: 80vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--success);
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-left: 3px solid var(--success);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification, .profile {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--white);
+        }
+        
+        .card-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .card-growth {
+            font-size: 14px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-growth.danger {
+            color: var(--danger);
+        }
+        
+        .analytics-bar {
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .analytics-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            border-radius: 5px;
+            width: 0;
+            animation: fillAnimation 2s ease-out forwards;
+        }
+        
+        @keyframes fillAnimation {
+            from { width: 0; }
+            to { width: var(--fill-width); }
+        }
+        
+        .todo-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .todo-checkbox {
+            margin-right: 10px;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .todo-checkbox:checked {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .todo-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .todo-text {
+            flex: 1;
+            color: var(--white);
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+        
+        th {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .transaction:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .transaction-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--white);
+        }
+        
+        .transaction-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .transaction-amount {
+            font-weight: 600;
+        }
+        
+        .transaction-amount.positive {
+            color: var(--success);
+        }
+        
+        .transaction-amount.negative {
+            color: var(--danger);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .large-card {
+            grid-column: span 2;
+        }
+        
+        .full-card {
+            grid-column: span 3;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                grid-column: span 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i> CMS Master
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-bell"></i> Notifications
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-database"></i> Dataset
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-file-alt"></i> Report
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <div class="header-actions">
+                    <div class="dropdown notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                        <div class="dropdown-content" id="notifications-dropdown">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="dropdown profile">
+                        <i class="fas fa-user-circle"></i>
+                        <div class="dropdown-content">
+                            <div class="dropdown-item">
+                                <i class="fas fa-user"></i> Profile
+                            </div>
+                            <div class="dropdown-item">
+                                <i class="fas fa-cog"></i> Settings
+                            </div>
+                            <div class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card stats-card">
+                    <div class="card-header">
+                        <div class="card-title">Statistics</div>
+                    </div>
+                    <div class="card-value" id="stat1">25.00</div>
+                    <div class="card-date" id="stat1-date">23 August, 2024</div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="--fill-width: 75%"></div>
+                    </div>
+                    <div class="card-value" id="stat2">12.00</div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="--fill-width: 45%"></div>
+                    </div>
+                    <div class="card-value" id="stat3">3.50</div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="--fill-width: 25%"></div>
+                    </div>
+                </div>
+                
+                <div class="card sales-card">
+                    <div class="card-header">
+                        <div class="card-title">Sales</div>
+                    </div>
+                    <div class="card-value" id="sales-total">3,500</div>
+                    <div class="card-date">Total</div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="--fill-width: 70%"></div>
+                    </div>
+                    <div class="card-date">Current Week</div>
+                    <div class="card-value" id="sales-week">2,500</div>
+                    <div class="card-growth" id="sales-growth">
+                        <span>▲</span> 1.8%
+                    </div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="--fill-width: 50%"></div>
+                    </div>
+                </div>
+                
+                <div class="card todo-card">
+                    <div class="card-header">
+                        <div class="card-title">To-Do List</div>
+                    </div>
+                    <ul class="todo-list" id="todo-list">
+                        <!-- Filled by JavaScript -->
+                    </ul>
+                </div>
+                
+                <div class="card large-card">
+                    <div class="card-header">
+                        <div class="card-title">Last Orders</div>
+                        <div class="card-actions">View All</div>
+                    </div>
+                    <table id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Order No.</th>
+                                <th>Amount</th>
+                                <th>Payment Type</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card full-card">
+                    <div class="card-header">
+                        <div class="card-title">Transactions</div>
+                        <div class="card-actions">View All</div>
+                    </div>
+                    <div id="transactions-list">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                &copy; 2024 CMS Master | Design by Sithira Senarathne
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch data from backend API
+        async function fetchDashboardData() {
+            try {
+                const [kpisRes, salesRes, ordersRes, transactionsRes, todosRes, notificationsRes] = await Promise.all([
+                    fetch('/api/kpis'),
+                    fetch('/api/sales'),
+                    fetch('/api/orders'),
+                    fetch('/api/transactions'),
+                    fetch('/api/todos'),
+                    fetch('/api/notifications')
+                ]);
+                
+                return {
+                    kpis: await kpisRes.json(),
+                    sales: await salesRes.json(),
+                    orders: await ordersRes.json(),
+                    transactions: await transactionsRes.json(),
+                    todos: await todosRes.json(),
+                    notifications: await notificationsRes.json()
+                };
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                return null;
+            }
+        }
+        
+        // Update UI with data
+        function updateDashboard(data) {
+            if (!data) return;
+            
+            // Update KPIs
+            if (data.kpis.length >= 3) {
+                document.getElementById('stat1').textContent = data.kpis[0].value.toFixed(2);
+                document.getElementById('stat1-date').textContent = formatDate(data.kpis[0].date);
+                document.getElementById('stat2').textContent = data.kpis[1].value.toFixed(2);
+                document.getElementById('stat3').textContent = data.kpis[2].value.toFixed(2);
+            }
+            
+            // Update Sales
+            document.getElementById('sales-total').textContent = data.sales.total.toLocaleString();
+            document.getElementById('sales-week').textContent = data.sales.current_week.toLocaleString();
+            const growthElement = document.getElementById('sales-growth');
+            growthElement.innerHTML = `<span>${data.sales.growth >= 0 ? '▲' : '▼'}</span> ${Math.abs(data.sales.growth)}%`;
+            if (data.sales.growth < 0) {
+                growthElement.classList.add('danger');
+            }
+            
+            // Update Orders
+            const ordersTable = document.querySelector('#orders-table tbody');
+            ordersTable.innerHTML = '';
+            data.orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.customer_name}</td>
+                    <td>${order.order_no}</td>
+                    <td>$${order.amount.toLocaleString()}</td>
+                    <td>${order.payment_type}</td>
+                    <td>${formatDate(order.date)}</td>
+                `;
+                ordersTable.appendChild(row);
+            });
+            
+            // Update Transactions
+            const transactionsList = document.getElementById('transactions-list');
+            transactionsList.innerHTML = '';
+            data.transactions.forEach(transaction => {
+                const transactionEl = document.createElement('div');
+                transactionEl.className = 'transaction';
+                
+                const amountClass = transaction.amount >= 0 ? 'positive' : 'negative';
+                const amountSign = transaction.amount >= 0 ? '+' : '';
+                
+                transactionEl.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-name">${transaction.customer_name}</div>
+                        <div class="transaction-time">${transaction.time} — ${formatDate(transaction.date)}</div>
+                    </div>
+                    <div class="transaction-amount ${amountClass}">${amountSign}$${Math.abs(transaction.amount).toLocaleString()}</div>
+                `;
+                transactionsList.appendChild(transactionEl);
+            });
+            
+            // Update To-Do List
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+            data.todos.forEach(todo => {
+                const todoItem = document.createElement('li');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                    <span class="todo-text ${todo.completed ? 'completed' : ''}">${todo.task}</span>
+                `;
+                todoList.appendChild(todoItem);
+            });
+            
+            // Update Notifications
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            notificationsDropdown.innerHTML = '';
+            data.notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'dropdown-item';
+                notificationItem.innerHTML = `
+                    <i class="fas fa-bell"></i>
+                    <div>
+                        <div>${notification.message}</div>
+                        <small>${notification.time}</small>
+                    </div>
+                `;
+                notificationsDropdown.appendChild(notificationItem);
+            });
+        }
+        
+        // Format date to "dd Month, yyyy"
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            const data = await fetchDashboardData();
+            updateDashboard(data);
+            
+            // Add event listeners for todo checkboxes
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('todo-checkbox')) {
+                    const text = e.target.nextElementSibling;
+                    if (e.target.checked) {
+                        text.classList.add('completed');
+                    } else {
+                        text.classList.remove('completed');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
